@@ -2,8 +2,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Location {
-  final String baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
   final apiKey = DotEnv().env['WEATHER_TOKEN'];
+  final String baseUrl = 'https://api.weatherbit.io/v2.0/current ';
   double longitude;
   double latitude;
 
@@ -20,6 +20,6 @@ class Location {
   }
 
   String getCurrentWeatherUrl(double lat, double lon) {
-    return '$baseUrl?lat=$lat&lon=$lon&appid=$apiKey&units=metric&lang=fr';
+    return '$baseUrl?key=$apiKey&units=m&lang=fr&lat=$lat&lon=$lon';
   }
 }
