@@ -1,18 +1,29 @@
 import 'package:weather_app/models/weather/current-weather_model.dart';
+import 'package:weather_app/models/weather/hourly-weather_model.dart';
 import 'package:weather_app/services/location.dart';
 import 'package:weather_app/services/request.dart';
 
 class WeatherService {
-  Future<CurrentWeatherModel> getCurrentWeatherFromLocation() async {
-    Location location = Location();
-    await location.getCurrentLocation();
-    String url = location.getCurrentWeatherUrl(
-      location.latitude,
-      location.longitude,
-    );
+  final location = Location();
+
+  Future<CurrentWeatherModel> getCurrentWeatherFromPosition(
+    double lat,
+    double lon,
+  ) async {
+    String url = location.getCurrentWeatherUrl(lat, lon);
 
     var res = await Request().get(url);
     return currentWeatherModelFromJson(res);
+  }
+
+  Future<HourlyForcastWeatherModel> getHourlyForcastWeatherFromPosition(
+    double lat,
+    double lon,
+  ) async {
+    String url = location.getHourlyForcastWeatherUrl(lat, lon);
+
+    var res = await Request().get(url);
+    return hourlyWeatherModelFromJson(res);
   }
 
   String getWeatherMainIcon(String condition) {

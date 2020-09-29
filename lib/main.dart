@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:weather_app/models/weather/current-weather_model.dart';
+import 'package:weather_app/models/weather/hourly-weather_model.dart';
 import 'package:weather_app/screens/location_screen.dart';
+import 'package:weather_app/services/location.dart';
 import 'package:weather_app/services/weather.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -32,12 +35,20 @@ class _WeatherAppPageState extends State<WeatherAppPage> {
   }
 
   void getLocationData() async {
-    var currentWeatherData =
-        await WeatherService().getCurrentWeatherFromLocation();
+    Location location = Location();
+    await location.getCurrentLocation();
+
+    CurrentWeatherModel currentWeatherData = await WeatherService()
+        .getCurrentWeatherFromPosition(location.latitude, location.longitude);
+
+    HourlyForcastWeatherModel hourlyForcastWeatherData = await WeatherService()
+        .getHourlyForcastWeatherFromPosition(
+            location.latitude, location.longitude);
 
     Navigator.push(context, MaterialPageRoute(builder: (context) {
       return LocationScreen(
         currentWeather: currentWeatherData,
+        hourlyForcastWeather: hourlyForcastWeatherData,
       );
     }));
   }

@@ -1,30 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:weather_app/models/weather/current-weather_model.dart';
+import 'package:weather_app/models/weather/hourly-weather_model.dart';
 import 'package:weather_app/services/weather.dart';
 
 class LocationScreen extends StatefulWidget {
   final CurrentWeatherModel currentWeather;
+  final HourlyForcastWeatherModel hourlyForcastWeather;
 
-  LocationScreen({this.currentWeather});
+  LocationScreen({
+    @required this.currentWeather,
+    @required this.hourlyForcastWeather,
+  });
 
   @override
   _LocationScreenState createState() => _LocationScreenState();
 }
 
 class _LocationScreenState extends State<LocationScreen> {
-  CurrentWeatherModel locationWeatherData;
+  CurrentWeatherModel currentWeatherData;
+  HourlyForcastWeatherModel hourlyForcastData;
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      locationWeatherData = widget.currentWeather;
+      currentWeatherData = widget.currentWeather;
+      hourlyForcastData = widget.hourlyForcastWeather;
     });
   }
 
   String addCorrectUTC(String hour) {
     List<String> splittedHour = hour.split(':');
     return (int.parse(splittedHour[0]) + 2).toString() + ':' + splittedHour[1];
+  }
+
+  List<Widget> generateCardFromHourlyForcastData() {
+    return hourlyForcastData.data
+        .map((hourlyForcast) => HourlyForcastWeatherCard(
+              iconUrl: hourlyForcast.weather.icon,
+              hour: hourlyForcast.timestampLocal.hour.toString() + ':00',
+              temp: hourlyForcast.temp.truncate(),
+            ))
+        .toList();
   }
 
   @override
@@ -37,7 +54,7 @@ class _LocationScreenState extends State<LocationScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${locationWeatherData.cityName},',
+                '${currentWeatherData.cityName},',
                 style: TextStyle(
                   fontFamily: 'Roboto',
                   fontWeight: FontWeight.w600,
@@ -66,7 +83,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 children: [
                   Image.asset(
                     WeatherService()
-                        .getWeatherMainIcon(locationWeatherData.weather.icon),
+                        .getWeatherMainIcon(currentWeatherData.weather.icon),
                     height: 160.0,
                   ),
                   Padding(
@@ -78,7 +95,7 @@ class _LocationScreenState extends State<LocationScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              '${locationWeatherData.appTemp.truncate()}',
+                              '${currentWeatherData.appTemp.truncate()}',
                               style: TextStyle(
                                 fontSize: 60,
                                 fontWeight: FontWeight.w600,
@@ -95,7 +112,7 @@ class _LocationScreenState extends State<LocationScreen> {
                           ],
                         ),
                         Text(
-                          locationWeatherData.weather.description,
+                          currentWeatherData.weather.description,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w200,
@@ -113,19 +130,19 @@ class _LocationScreenState extends State<LocationScreen> {
                 children: [
                   IconInformationWidget(
                     imagePath: 'images/icn/icn_sunrise.png',
-                    data: addCorrectUTC(locationWeatherData.sunrise),
+                    data: addCorrectUTC(currentWeatherData.sunrise),
                   ),
                   IconInformationWidget(
                     imagePath: 'images/icn/icn_sunset.png',
-                    data: addCorrectUTC(locationWeatherData.sunset),
+                    data: addCorrectUTC(currentWeatherData.sunset),
                   ),
                   IconInformationWidget(
                     imagePath: 'images/icn/icn_wind.png',
-                    data: '${locationWeatherData.windSpd.truncate()}km/h',
+                    data: '${currentWeatherData.windSpd.truncate()}km/h',
                   ),
                   IconInformationWidget(
                     imagePath: 'images/icn/icn_humidity.png',
-                    data: '${locationWeatherData.rh.truncate()}%',
+                    data: '${currentWeatherData.rh.truncate()}%',
                   ),
                 ],
               ),
@@ -155,67 +172,7 @@ class _LocationScreenState extends State<LocationScreen> {
                 child: ListView(
                   padding: EdgeInsets.only(top: 12, bottom: 4),
                   scrollDirection: Axis.horizontal,
-                  children: [
-                    HourForcastWeatherCard(
-                      iconUrl: 'images/icn/icn_sunny.png',
-                      hour: '10:00',
-                      temp: 20,
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(left: 16, right: 16),
-                      width: 50.0,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            Color(0xFF92BBF8),
-                            Color(0xFF92BBF8),
-                            Color(0xFF327EF1),
-                          ],
-                        ),
-                        border: Border.all(color: Colors.white),
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text(
-                            '11:00',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          Image.network(
-                            'https://www.weatherbit.io/static/img/icons/${locationWeatherData.weather.icon}.png',
-                            height: 30,
-                          ),
-                          Text(
-                            '20°',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ],
-                      ),
-                    ),
-                    HourForcastWeatherCard(
-                      iconUrl: 'images/icn/icn_sunny.png',
-                      hour: '12:00',
-                      temp: 24,
-                    ),
-                    HourForcastWeatherCard(
-                      iconUrl: 'images/icn/icn_sunny.png',
-                      hour: '13:00',
-                      temp: 23,
-                    ),
-                    HourForcastWeatherCard(
-                      iconUrl: 'images/icn/icn_sunny.png',
-                      hour: '14:00',
-                      temp: 20,
-                    ),
-                    HourForcastWeatherCard(
-                      iconUrl: 'images/icn/icn_sunny.png',
-                      hour: '15:00',
-                      temp: 19,
-                    ),
-                  ],
+                  children: generateCardFromHourlyForcastData().toList(),
                 ),
               ),
               Spacer(flex: 2),
@@ -227,12 +184,12 @@ class _LocationScreenState extends State<LocationScreen> {
   }
 }
 
-class HourForcastWeatherCard extends StatelessWidget {
+class HourlyForcastWeatherCard extends StatelessWidget {
   final String hour;
   final String iconUrl;
   final int temp;
 
-  const HourForcastWeatherCard({
+  const HourlyForcastWeatherCard({
     @required this.hour,
     @required this.iconUrl,
     @required this.temp,
@@ -255,8 +212,8 @@ class HourForcastWeatherCard extends StatelessWidget {
             hour,
             style: TextStyle(color: Colors.grey),
           ),
-          Image.asset(
-            iconUrl,
+          Image.network(
+            'https://www.weatherbit.io/static/img/icons/$iconUrl.png',
             height: 40,
           ),
           Text(

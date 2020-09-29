@@ -60,7 +60,7 @@ class CurrentWeatherModel {
   int hAngle;
   double dewpt;
   Weather weather;
-  int uv;
+  double uv;
   int aqi;
   String station;
   int windDir;
@@ -68,9 +68,9 @@ class CurrentWeatherModel {
   String datetime;
   int precip;
   double ghi;
-  int dni;
-  int dhi;
-  int solarRad;
+  double dni;
+  double dhi;
+  double solarRad;
   String cityName;
   String sunrise;
   String sunset;
@@ -98,7 +98,7 @@ class CurrentWeatherModel {
         hAngle: json["h_angle"],
         dewpt: json["dewpt"].toDouble(),
         weather: Weather.fromJson(json["weather"]),
-        uv: json["uv"],
+        uv: json["uv"].toDouble(),
         aqi: json["aqi"],
         station: json["station"],
         windDir: json["wind_dir"],
@@ -106,9 +106,9 @@ class CurrentWeatherModel {
         datetime: json["datetime"],
         precip: json["precip"],
         ghi: json["ghi"].toDouble(),
-        dni: json["dni"],
-        dhi: json["dhi"],
-        solarRad: json["solar_rad"],
+        dni: json["dni"].toDouble(),
+        dhi: json["dhi"].toDouble(),
+        solarRad: json["solar_rad"].toDouble(),
         cityName: json["city_name"],
         sunrise: json["sunrise"],
         sunset: json["sunset"],
