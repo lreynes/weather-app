@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:weather_app/models/full-weather_model.dart';
 import 'package:weather_app/models/weather/current-weather_model.dart';
 import 'package:weather_app/models/weather/hourly-weather_model.dart';
-import 'package:weather_app/services/weather.dart';
+import 'package:weather_app/services/weather_service.dart';
 
-class LocationScreen extends StatefulWidget {
-  final CurrentWeatherModel currentWeather;
-  final HourlyForcastWeatherModel hourlyForcastWeather;
+class WeatherAppScreen extends StatefulWidget {
+  final FullWeatherModel fullWeather;
 
-  LocationScreen({
-    @required this.currentWeather,
-    @required this.hourlyForcastWeather,
-  });
+  WeatherAppScreen({@required this.fullWeather});
 
   @override
-  _LocationScreenState createState() => _LocationScreenState();
+  _WeatherAppScreenState createState() => _WeatherAppScreenState();
 }
 
-class _LocationScreenState extends State<LocationScreen> {
+class _WeatherAppScreenState extends State<WeatherAppScreen> {
   CurrentWeatherModel currentWeatherData;
   HourlyForcastWeatherModel hourlyForcastData;
 
@@ -24,8 +21,8 @@ class _LocationScreenState extends State<LocationScreen> {
   void initState() {
     super.initState();
     setState(() {
-      currentWeatherData = widget.currentWeather;
-      hourlyForcastData = widget.hourlyForcastWeather;
+      currentWeatherData = widget.fullWeather.currentWeatherModel;
+      hourlyForcastData = widget.fullWeather.hourlyForcastWeatherModel;
     });
   }
 
